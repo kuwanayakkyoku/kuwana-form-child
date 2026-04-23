@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>桑名薬局 問診票（お子様用）</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:#f4f7f4;font-family:sans-serif;padding:16px;}
+.wrap{max-width:420px;margin:0 auto;background:#fff;border-radius:16px;border:1px solid #e0e8d8;overflow:hidden;}
+.prog-outer{height:8px;background:#e8e8e0;}
+.prog-inner{height:8px;background:#5ab55a;transition:width 0.4s;}
+.top-bar{padding:14px 20px 12px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #e8e8e0;}
+.top-logo{font-size:14px;font-weight:500;color:#469a46;}
+.top-step{font-size:13px;color:#888;}
+.content{padding:22px 20px 18px;}
+.sec-hd{display:flex;align-items:center;gap:10px;margin-bottom:16px;padding-bottom:14px;border-bottom:1.5px solid #e0e8d8;}
+.sec-num{width:34px;height:34px;border-radius:50%;background:#5ab55a;color:#fff;font-size:15px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.sec-title{font-size:18px;font-weight:500;color:#222;}
+.q-block{margin-bottom:20px;}
+.q-lbl{font-size:15px;color:#222;line-height:1.6;margin-bottom:8px;}
+.q-sub{font-size:12px;color:#888;margin-bottom:10px;line-height:1.5;}
+.req{color:#c04040;margin-left:2px;}
+.inp{width:100%;border:1.5px solid #c8dfc8;border-radius:10px;padding:11px 13px;font-size:14px;font-family:sans-serif;color:#222;background:#fff;outline:none;}
+.inp:focus{border-color:#5ab55a;box-shadow:0 0 0 3px rgba(90,181,90,0.15);}
+textarea.inp{resize:none;line-height:1.6;}
+.yn-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.yn-btn{border:2px solid #c8dfc8;border-radius:14px;padding:15px 10px;font-size:16px;font-weight:500;font-family:sans-serif;background:#fff;color:#333;cursor:pointer;transition:all 0.15s;}
+.yn-btn.sel{border-color:#5ab55a;background:#5ab55a;color:#fff;}
+.list-btn{border:2px solid #c8dfc8;border-radius:12px;padding:13px 16px;font-size:14px;font-family:sans-serif;background:#fff;color:#333;cursor:pointer;text-align:left;display:flex;justify-content:space-between;align-items:center;width:100%;margin-bottom:8px;}
+.list-btn.sel{border-color:#5ab55a;background:#5ab55a;color:#fff;}
+.list-btn .chk{width:20px;height:20px;border-radius:50%;border:2px solid #c8dfc8;display:inline-flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;}
+.list-btn.sel .chk{background:#fff;border-color:#fff;color:#5ab55a;}
+.sub-card{background:#eaf5ea;border:1.5px solid #c8dfc8;border-radius:12px;padding:14px 16px;margin-top:12px;}
+.sub-lbl{font-size:13px;color:#2a6a2a;margin-bottom:10px;line-height:1.5;}
+.chip-wrap{display:flex;flex-wrap:wrap;gap:8px;}
+.chip{border:1.5px solid #c8dfc8;border-radius:20px;padding:8px 14px;font-size:13px;font-family:sans-serif;background:#fff;color:#333;cursor:pointer;display:flex;align-items:center;gap:5px;}
+.chip.sel{border-color:#5ab55a;background:#eaf5ea;color:#2a6a2a;font-weight:500;}
+.techo-btn{border:1.5px solid #5ab55a;border-radius:10px;padding:12px 14px;font-size:14px;font-family:sans-serif;background:#eaf5ea;color:#2a6a2a;cursor:pointer;display:flex;align-items:center;justify-content:space-between;margin-top:10px;font-weight:500;width:100%;}
+.techo-btn.sel{background:#5ab55a;color:#fff;}
+.techo-btn .chk{width:20px;height:20px;border-radius:50%;border:2px solid #5ab55a;display:inline-flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;color:transparent;}
+.techo-btn.sel .chk{background:#fff;border-color:#fff;color:#5ab55a;}
+.footer{padding:14px 20px;border-top:1px solid #e8e8e0;background:#f8f8f4;display:flex;gap:10px;flex-direction:column;}
+.footer-btns{display:flex;gap:10px;}
+.btn-back{flex:1;padding:15px;border-radius:12px;border:1.5px solid #ccc;background:#fff;font-size:15px;font-weight:500;color:#666;cursor:pointer;font-family:sans-serif;}
+.btn-back:disabled{opacity:0.3;cursor:default;}
+.btn-next{flex:2;padding:15px;border-radius:12px;border:none;background:#5ab55a;color:#fff;font-size:15px;font-weight:500;cursor:pointer;font-family:sans-serif;}
+.btn-next:disabled{opacity:0.7;}
+.err-msg{font-size:12px;color:#c04040;text-align:center;padding:4px 0;display:none;}
+.brand{padding:12px;text-align:center;font-size:11px;color:#aaa;border-top:1px solid #eee;line-height:1.7;}
+.complete-circle{width:60px;height:60px;border-radius:50%;background:#eaf5ea;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:28px;color:#5ab55a;border:2px solid #b0d8b0;}
+.sum-card{background:#eaf5ea;border-radius:12px;border:1px solid #c8dfc8;padding:14px;text-align:left;margin-top:16px;}
+.sum-row{display:flex;justify-content:space-between;font-size:12px;padding:6px 0;border-bottom:1px solid #e0ead8;gap:8px;}
+.sum-row:last-child{border-bottom:none;}
+.sum-k{color:#888;flex-shrink:0;}
+.sum-v{color:#222;font-weight:500;text-align:right;}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+
+<script>
+const GAS_URL = "https://script.google.com/macros/s/AKfycbz7st-n_WZ6uSz5-GJ-LtBJqp-duTLua78LSjzbEgHb0ywFXXLxLjpc0nOkRuq-aC4/exec";
+const TOTAL = 7;
+
+const ALLERGY_ITEMS = [["お薬","💊"],["牛乳・乳製品","🥛"],["卵","🥚"],["アルコール","🍷"],["果物","🍎"],["小麦","🌾"],["エビ・カニ","🦐"],["そば","🍜"],["ピーナッツ","🥜"],["その他","✏️"]];
+const TAISHITSU_ITEMS = ["花粉症","胃弱","下痢しやすい","便秘しやすい","かぶれやすい","気管支が弱い","アトピー"];
+const SEIKATSU_ITEMS = ["車の運転","機械の操作","高所作業","夜勤"];
+const SHIKO_ITEMS = [["お酒","🍺"],["タバコ","🚬"],["コーヒー","☕"],["グレープフルーツ","🍊"],["納豆","🫘"]];
+
+let step = 1;
+let st = {
+  name:"",dob:"",weight:"",address:"",phone:"",
+  techo_yn:"",techo_sub:"",
+  rx:"",rx_names:"",rx_techo:false,
+  otc:"",otc_names:"",
+  allergy_yn:"",allergy:[],allergy_other:"",
+  owa_yn:"",owa:"",
+  taishitsu:[],seikatsu:[],shiko:[],
+  febrile_yn:"",febrile_count:"",febrile_age:"",
+  kigyo_yn:"",kigyo:"",
+  med_pref_yn:"",med_pref:""
+};
+
+function tog(arr, val, noneVal) {
+  const a = arr.filter(x => x !== (noneVal||"__none__"));
+  return a.includes(val) ? a.filter(x=>x!==val) : [...a, val];
+}
+
+function secHd(n, title) {
+  return `<div class="sec-hd"><div class="sec-num">${n}</div><span class="sec-title">${title}</span></div>`;
+}
+
+function ynRow(key, v1, v2) {
+  return `<div class="yn-row">
+    <button class="yn-btn${st[key]===v1?' sel':''}" onclick="pick('${key}','${v1}')">${v1}</button>
+    <button class="yn-btn${st[key]===v2?' sel':''}" onclick="pick('${key}','${v2}')">${v2}</button>
+  </div>`;
+}
+
+function listBtn(key, val, label) {
+  const sel = st[key]===val;
+  return `<button class="list-btn${sel?' sel':''}" onclick="pick('${key}','${val}')">${label}<span class="chk">${sel?'✓':''}</span></button>`;
+}
+
+function chip(key, val, icon, noneVal) {
+  const sel = st[key].includes(val);
+  return `<button class="chip${sel?' sel':''}" onclick="togChip('${key}','${val}','${noneVal||''}')">${icon?`<span style="font-size:15px">${icon}</span>`:''}${val}</button>`;
+}
+
+function noneChip(key, label, noneVal) {
+  const sel = st[key].includes(noneVal);
+  return `<button class="chip${sel?' sel':''}" onclick="setNone('${key}','${noneVal}')">${label}</button>`;
+}
+
+function stepHTML() {
+  if (step===1) return `
+    ${secHd(1,'基本情報')}
+    ${['name,お名前,text,例：山田 花子,true','dob,生年月日,date,,true','weight,体重,text,例：15 kg,true','address,ご住所,text,例：桑名市…,true','phone,電話番号,tel,例：090-0000-0000,true'].map(r=>{
+      const [key,lbl,type,ph,req]=r.split(',');
+      return `<div class="q-block"><div class="q-lbl">${lbl}${req==='true'?'<span class="req">★</span>':''}</div>
+        <input class="inp" type="${type}" placeholder="${ph}" value="${st[key]}" oninput="st['${key}']=this.value"></div>`;
+    }).join('')}`;
+
+  if (step===2) return `
+    ${secHd(2,'お薬手帳について')}
+    <div class="q-block">
+      <div class="q-lbl">Q1. お薬手帳は本日お持ちですか？<span class="req">★</span></div>
+      <div class="q-sub">3か月以内の再来局はお薬手帳持参で料金が安くなります</div>
+      ${ynRow('techo_yn','ある','ない')}
+      ${st.techo_yn==='ある'?`<div class="sub-card"><div class="sub-lbl">種類を選んでください</div>
+        ${listBtn('techo_sub','紙のお薬手帳','紙のお薬手帳')}
+        ${listBtn('techo_sub','電子手帳（スマホアプリ等）','電子手帳（スマホアプリ等）')}
+      </div>`:''}
+      ${st.techo_yn==='ない'?`<div class="sub-card"><div class="sub-lbl">詳しく教えてください</div>
+        ${listBtn('techo_sub','家にある（次回持参）','家にある（次回持参）')}
+        ${listBtn('techo_sub','作成希望','作成希望')}
+        ${listBtn('techo_sub','不要','不要')}
+      </div>`:''}
+    </div>`;
+
+  if (step===3) return `
+    ${secHd(3,'現在飲んでいるお薬')}
+    <div class="q-block">
+      <div class="q-lbl">病院で処方されたお薬はありますか？<span class="req">★</span></div>
+      ${ynRow('rx','ない','ある')}
+      ${st.rx==='ある'?`<div class="sub-card">
+        <div class="sub-lbl">お薬の名前をご記入ください（わかる範囲で）</div>
+        <textarea class="inp" rows="3" placeholder="例：ロキソニン、アムロジン など" oninput="st.rx_names=this.value">${st.rx_names}</textarea>
+        <button class="techo-btn${st.rx_techo?' sel':''}" onclick="st.rx_techo=!st.rx_techo;render()">
+          <span><span style="font-size:16px;margin-right:8px">📔</span>お薬手帳も一緒に持参している</span>
+          <span class="chk">${st.rx_techo?'✓':''}</span>
+        </button>
+      </div>`:''}
+    </div>`;
+
+  if (step===4) return `
+    ${secHd(4,'市販薬・健康食品')}
+    <div class="q-block">
+      <div class="q-lbl">市販薬・サプリ・健康食品はありますか？<span class="req">★</span></div>
+      ${ynRow('otc','ない','ある')}
+      ${st.otc==='ある'?`<div class="sub-card">
+        <div class="sub-lbl">名前をご記入ください</div>
+        <textarea class="inp" rows="2" placeholder="例：ロキソニンS、ビタミンC など" oninput="st.otc_names=this.value">${st.otc_names}</textarea>
+      </div>`:''}
+    </div>`;
+
+  if (step===5) return `
+    ${secHd(5,'アレルギーについて')}
+    <div class="q-block">
+      <div class="q-lbl">お薬や食べ物でアレルギーのご経験はありますか？<span class="req">★</span></div>
+      ${ynRow('allergy_yn','いいえ','はい')}
+      ${st.allergy_yn==='はい'?`<div class="sub-card">
+        <div class="sub-lbl">当てはまるものを選んでください（複数選択可）</div>
+        <div class="chip-wrap">${ALLERGY_ITEMS.map(([v,i])=>chip('allergy',v,i,'')).join('')}</div>
+        ${st.allergy.includes('その他')?`<div style="margin-top:12px">
+          <div style="font-size:12px;color:#2a6a2a;margin-bottom:6px">「その他」の内容をご記入ください</div>
+          <input class="inp" type="text" placeholder="例：ゴム（ラテックス）など" value="${st.allergy_other}" oninput="st.allergy_other=this.value">
+        </div>`:''}
+      </div>`:''}
+    </div>
+    <div class="q-block">
+      <div class="q-lbl">いままで合わなかったお薬はありますか？<span class="req">★</span></div>
+      ${ynRow('owa_yn','ない','ある')}
+      ${st.owa_yn==='ある'?`<div class="sub-card">
+        <div class="sub-lbl">お薬の名前をご記入ください</div>
+        <input class="inp" type="text" placeholder="例：ペニシリン系抗生物質 など" value="${st.owa}" oninput="st.owa=this.value">
+      </div>`:''}
+    </div>`;
+
+  if (step===6) return `
+    ${secHd(6,'体質')}
+    <div class="q-block">
+      <div class="q-lbl">体質で気になることをすべて選んでください<span class="req">★</span></div>
+      <div class="q-sub">複数選択可。当てはまるものがなければ「なし」を選んでください</div>
+      <div class="chip-wrap">
+        ${TAISHITSU_ITEMS.map(v=>chip('taishitsu',v,'','なし')).join('')}
+        ${noneChip('taishitsu','なし','なし')}
+      </div>
+    </div>`;
+
+  if (step===7) return `
+    ${secHd(7,'既往歴・その他')}
+    <div class="q-block">
+      <div class="q-lbl">熱性けいれん（ひきつけ）を起こされたことはありますか？<span class="req">★</span></div>
+      ${ynRow('febrile_yn','ない','ある')}
+      ${st.febrile_yn==='ある'?`<div class="sub-card">
+        <div class="sub-lbl">詳しく教えてください</div>
+        <div style="margin-bottom:10px">
+          <div style="font-size:13px;color:#2a6a2a;margin-bottom:6px">今までに何回ほどありましたか？</div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <input class="inp" type="number" placeholder="例：2" style="width:100px" value="${st.febrile_count}" oninput="st.febrile_count=this.value">
+            <span style="font-size:14px;color:#444">回ほど</span>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:13px;color:#2a6a2a;margin-bottom:6px">最後はお子様が何歳ごろでしたか？</div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <input class="inp" type="number" placeholder="例：3" style="width:100px" value="${st.febrile_age}" oninput="st.febrile_age=this.value">
+            <span style="font-size:14px;color:#444">歳ごろ</span>
+          </div>
+        </div>
+      </div>`:''}
+    </div>
+    <div class="q-block">
+      <div class="q-lbl">生まれてから大きな病気・手術をされたことはありますか？<span class="req">★</span></div>
+      ${ynRow('kigyo_yn','ない','ある')}
+      ${st.kigyo_yn==='ある'?`<div class="sub-card">
+        <div class="sub-lbl">病名・手術名をご記入ください</div>
+        <textarea class="inp" rows="2" placeholder="例：川崎病、心室中隔欠損症 など" oninput="st.kigyo=this.value">${st.kigyo}</textarea>
+      </div>`:''}
+    </div>
+    <div class="q-block">
+      <div class="q-lbl">お薬に関してご希望はありますか？<span class="req">★</span></div>
+      <div class="q-sub">例：粉薬がのめない、錠剤がのめない など</div>
+      ${ynRow('med_pref_yn','ない','ある')}
+      ${st.med_pref_yn==='ある'?`<div class="sub-card">
+        <div class="sub-lbl">ご希望をご記入ください</div>
+        <textarea class="inp" rows="2" placeholder="例：粉薬がのめない、錠剤がのめない など" oninput="st.med_pref=this.value">${st.med_pref}</textarea>
+      </div>`:''}
+    </div>`;
+
+
+
+  // 完了画面
+  const td = st.techo_yn+(st.techo_sub?`（${st.techo_sub}）`:'');
+  const ad = st.allergy_yn==='はい'?(st.allergy.map(v=>v==='その他'&&st.allergy_other?`その他（${st.allergy_other}）`:v).join('、')||'未選択'):'なし';
+  const febrileDisplay = st.febrile_yn==='ある'?`あり（${st.febrile_count||'?'}回ほど、最後${st.febrile_age||'?'}歳ごろ）`:'なし';
+  const rows = [
+    ['お名前',st.name||'未入力'],['生年月日',st.dob||'未入力'],['体重',st.weight||'未入力'],
+    ['お薬手帳',td||'未選択'],
+    ['処方薬',st.rx==='ある'?(st.rx_techo?(st.rx_names||'記入なし')+'（手帳持参）':st.rx_names||'記入なし'):st.rx||'未選択'],
+    ['市販薬等',st.otc==='ある'?(st.otc_names||'記入なし'):st.otc||'未選択'],
+    ['アレルギー',ad],
+    ['合わなかった薬',st.owa_yn==='ある'?(st.owa||'記入なし'):'なし'],
+    ['体質',st.taishitsu.length?st.taishitsu.join('、'):'未選択'],
+    ['熱性けいれん',febrileDisplay],
+    ['既往歴',st.kigyo_yn==='ある'?(st.kigyo||'記入なし'):'なし'],
+    ['お薬の希望',st.med_pref_yn==='ある'?(st.med_pref||'記入なし'):'なし'],
+  ];
+  return `<div style="text-align:center;padding:30px 0 10px">
+    <div class="complete-circle" style="display:flex">✓</div>
+    <h2 style="font-size:18px;font-weight:500;margin-bottom:8px;color:#222">ご回答ありがとうございました</h2>
+    <p style="font-size:13px;color:#888;line-height:1.7">入力内容をスタッフが確認いたします。<br>そのままお待ちください。</p>
+    <div class="sum-card">${rows.map(([k,v])=>`<div class="sum-row"><span class="sum-k">${k}</span><span class="sum-v">${v}</span></div>`).join('')}</div>
+  </div>`;
+}
+
+function render() {
+  const done = step > TOTAL;
+  const pct = Math.min((step/TOTAL)*100, 100);
+  document.getElementById('app').innerHTML = `
+    <div class="prog-outer"><div class="prog-inner" style="width:${done?100:pct}%"></div></div>
+    <div class="top-bar">
+      <span class="top-logo">桑名薬局　問診票（お子様用）</span>
+      <span class="top-step">${done?'完了':step+' / '+TOTAL}</span>
+    </div>
+    <div class="content">${stepHTML()}</div>
+    ${!done?`<div class="footer">
+      <div id="err-msg" class="err-msg">送信に失敗しました。もう一度お試しください。</div>
+      <div class="footer-btns">
+        <button class="btn-back" ${step===1?'disabled':''} onclick="goBack()">← 戻る</button>
+        <button class="btn-next" id="btn-next" onclick="goNext()">${step===TOTAL?'送信する ✓':'次へ →'}</button>
+      </div>
+    </div>`:''}
+    <div class="brand">© 桑名薬局 All Rights Reserved.<br>ご記入いただいた個人情報は、薬剤の適正使用の目的以外では利用いたしません</div>
+  `;
+}
+
+function pick(key, val) {
+  if (key==='techo_yn') st.techo_sub='';
+  st[key] = st[key]===val ? '' : val;
+  render();
+}
+
+function togChip(key, val, noneVal) {
+  st[key] = tog(st[key], val, noneVal||'');
+  render();
+}
+
+function setNone(key, noneVal) {
+  st[key] = st[key].includes(noneVal) ? [] : [noneVal];
+  render();
+}
+
+function validate() {
+  if (step===1) {
+    if (!st.name.trim()) return 'お名前を入力してください';
+    if (!st.weight.trim()) return '体重を入力してください';
+    if (!st.dob) return '生年月日を入力してください';
+    if (!st.address.trim()) return 'ご住所を入力してください';
+    if (!st.phone.trim()) return '電話番号を入力してください';
+  }
+  if (step===2) {
+    if (!st.techo_yn) return 'お薬手帳の有無を選んでください';
+  }
+  if (step===3) {
+    if (!st.rx) return '処方薬の有無を選んでください';
+  }
+  if (step===4) {
+    if (!st.otc) return '市販薬・健康食品の有無を選んでください';
+  }
+  if (step===5) {
+    if (!st.allergy_yn) return 'アレルギーの有無を選んでください';
+    if (!st.owa_yn) return '合わなかったお薬の有無を選んでください';
+  }
+  if (step===6) {
+    if (!st.taishitsu.length) return '体質を選んでください（なしでも可）';
+  }
+  if (step===7) {
+    if (!st.febrile_yn) return '熱性けいれんの有無を選んでください';
+    if (!st.kigyo_yn) return '既往歴の有無を選んでください';
+    if (!st.med_pref_yn) return 'お薬のご希望の有無を選んでください';
+  }
+  return null;
+}
+
+function goBack() {
+  if (step > 1) { step--; render(); }
+}
+
+async function goNext() {
+  const err = validate();
+  if (err) {
+    const el = document.getElementById('err-msg');
+    if (el) { el.textContent = err; el.style.display = 'block'; }
+    return;
+  }
+  if (step < TOTAL) {
+    step++;
+    render();
+    return;
+  }
+  // 送信
+  const btn = document.getElementById('btn-next');
+  btn.disabled = true;
+  btn.textContent = '送信中...';
+  try {
+    await fetch(GAS_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify(st)
+    });
+    step = TOTAL + 1;
+    render();
+  } catch(e) {
+    document.getElementById('err-msg').style.display = 'block';
+    btn.disabled = false;
+    btn.textContent = '送信する ✓';
+  }
+}
+
+render();
+</script>
+</body>
+</html>
