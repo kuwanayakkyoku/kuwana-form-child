@@ -48,6 +48,16 @@ textarea.inp{resize:none;line-height:1.6;}
 .btn-next:disabled{opacity:0.7;}
 .err-msg{font-size:12px;color:#c04040;text-align:center;padding:4px 0;display:none;}
 .brand{padding:12px;text-align:center;font-size:11px;color:#aaa;border-top:1px solid #eee;line-height:1.7;}
+.consent-wrap{padding:22px 20px;display:flex;flex-direction:column;gap:16px;}
+.consent-title{font-size:18px;font-weight:500;color:#222;padding-bottom:14px;border-bottom:1.5px solid #e0e8d8;}
+.consent-box{background:#f8f8f4;border:1px solid #e0e8d8;border-radius:12px;padding:16px;font-size:13px;color:#444;line-height:1.8;max-height:280px;overflow-y:auto;}
+.consent-box h3{font-size:13px;font-weight:500;color:#222;margin-bottom:6px;margin-top:12px;}
+.consent-box h3:first-child{margin-top:0;}
+.consent-check{display:flex;align-items:flex-start;gap:10px;padding:14px;background:#eaf5ea;border:1.5px solid #c8dfc8;border-radius:12px;cursor:pointer;}
+.consent-check input{width:20px;height:20px;flex-shrink:0;accent-color:#5ab55a;cursor:pointer;margin-top:1px;}
+.consent-check-lbl{font-size:14px;color:#222;line-height:1.6;cursor:pointer;}
+.btn-consent{width:100%;padding:16px;border-radius:12px;border:none;background:#5ab55a;color:#fff;font-size:16px;font-weight:500;cursor:pointer;font-family:sans-serif;transition:background 0.15s;}
+.btn-consent:disabled{background:#ccc;cursor:default;}
 .complete-circle{width:60px;height:60px;border-radius:50%;background:#eaf5ea;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:28px;color:#5ab55a;border:2px solid #b0d8b0;}
 .sum-card{background:#eaf5ea;border-radius:12px;border:1px solid #c8dfc8;padding:14px;text-align:left;margin-top:16px;}
 .sum-row{display:flex;justify-content:space-between;font-size:12px;padding:6px 0;border-bottom:1px solid #e0ead8;gap:8px;}
@@ -68,6 +78,7 @@ const TAISHITSU_ITEMS = ["花粉症","胃弱","下痢しやすい","便秘しや
 const SEIKATSU_ITEMS = ["車の運転","機械の操作","高所作業","夜勤"];
 const SHIKO_ITEMS = [["お酒","🍺"],["タバコ","🚬"],["コーヒー","☕"],["グレープフルーツ","🍊"],["納豆","🫘"]];
 
+let consented = false;
 let step = 1;
 let st = {
   name:"",dob:"",weight:"",address:"",phone:"",
@@ -261,7 +272,7 @@ function stepHTML() {
   return `<div style="text-align:center;padding:30px 0 10px">
     <div class="complete-circle" style="display:flex">✓</div>
     <h2 style="font-size:18px;font-weight:500;margin-bottom:8px;color:#222">ご回答ありがとうございました</h2>
-    <p style="font-size:13px;color:#888;line-height:1.7">入力内容をスタッフが確認いたします。<br>そのままお待ちください。</p>
+    <div style="background:#eaf5ea;border:1.5px solid #c8dfc8;border-radius:10px;padding:12px 14px;margin-bottom:12px;font-size:13px;color:#2a6a2a;line-height:1.6;text-align:left">✅ 送信が完了しました。スタッフがお呼びするまでそのままお待ちください。</div>
     <div class="sum-card">${rows.map(([k,v])=>`<div class="sum-row"><span class="sum-k">${k}</span><span class="sum-v">${v}</span></div>`).join('')}</div>
   </div>`;
 }
@@ -339,6 +350,8 @@ function goBack() {
   if (step > 1) { step--; render(); }
 }
 
+let isSending = false;
+
 async function goNext() {
   const err = validate();
   if (err) {
@@ -351,23 +364,43 @@ async function goNext() {
     render();
     return;
   }
-  // 送信
+  // 重複送信防止
+  if (isSending) return;
+  isSending = true;
+
   const btn = document.getElementById('btn-next');
   btn.disabled = true;
   btn.textContent = '送信中...';
-  try {
-    await fetch(GAS_URL, {
-      method: 'POST',
-      mode: 'no-cors',
-      headers: { 'Content-Type': 'text/plain' },
-      body: JSON.stringify(st)
-    });
+  const maxRetry = 3;
+  let success = false;
+  for (let i = 0; i < maxRetry; i++) {
+    try {
+      if (i > 0) {
+        btn.textContent = `再送信中... (${i+1}/${maxRetry})`;
+        await new Promise(r => setTimeout(r, 2000));
+      }
+      await fetch(GAS_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify(st)
+      });
+      success = true;
+      break;
+    } catch(e) {
+      if (i === maxRetry - 1) {
+        const el = document.getElementById('err-msg');
+        el.textContent = '送信に失敗しました。電波の良い場所で再度お試しください。';
+        el.style.display = 'block';
+        btn.disabled = false;
+        btn.textContent = '送信する ✓';
+        isSending = false;
+      }
+    }
+  }
+  if (success) {
     step = TOTAL + 1;
     render();
-  } catch(e) {
-    document.getElementById('err-msg').style.display = 'block';
-    btn.disabled = false;
-    btn.textContent = '送信する ✓';
   }
 }
 
