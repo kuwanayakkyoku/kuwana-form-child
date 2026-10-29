@@ -277,7 +277,45 @@ function stepHTML() {
   </div>`;
 }
 
+function renderConsent() {
+  document.getElementById('app').innerHTML = `
+    <div class="prog-outer"><div class="prog-inner" style="width:0%"></div></div>
+    <div class="top-bar">
+      <span class="top-logo">桑名薬局　問診票（お子様用）</span>
+      <span class="top-step">同意確認</span>
+    </div>
+    <div class="consent-wrap">
+      <div class="consent-title">個人情報の取り扱いについて</div>
+      <div class="consent-box">
+        <h3>■ 利用目的</h3>
+        ご記入いただいた個人情報は、以下の目的のために利用いたします。<br>
+        ・薬剤の適正使用および服薬指導のため<br>
+        ・調剤業務および薬歴管理のため<br>
+        ・医療機関との連携のため
+        <h3>■ 第三者提供について</h3>
+        ご本人の同意なく、第三者に個人情報を提供することはありません。ただし、法令に基づく場合を除きます。
+        <h3>■ 保存期間</h3>
+        収集した個人情報は、最終来局日から1ヶ月を経過した後に削除いたします。
+        <h3>■ 個人情報の開示・訂正・削除について</h3>
+        ご本人からの個人情報の開示・訂正・削除のご要望には適切に対応いたします。
+        <h3>■ お問い合わせ先</h3>
+        桑名薬局<br>
+        〒511-0033 三重県桑名市寿町３丁目２５番地<br>
+        TEL：0594-84-6652<br>
+        個人情報保護管理者：管理者　野中
+      </div>
+      <label class="consent-check">
+        <input type="checkbox" id="consent-cb" onchange="document.getElementById('btn-consent').disabled=!this.checked">
+        <span class="consent-check-lbl">上記の個人情報の取り扱いについて確認し、同意します</span>
+      </label>
+      <button class="btn-consent" id="btn-consent" disabled onclick="consented=true;render()">同意して問診票へ進む</button>
+    </div>
+    <div class="brand">© 桑名薬局 All Rights Reserved.<br>個人情報保護法に基づき適切に管理いたします</div>
+  `;
+}
+
 function render() {
+  if (!consented) { renderConsent(); return; }
   const done = step > TOTAL;
   const pct = Math.min((step/TOTAL)*100, 100);
   document.getElementById('app').innerHTML = `
